@@ -1,6 +1,6 @@
 ---
 name: react-router
-description: Build applications with React Router in Framework, Data, Declarative, and unstable RSC modes. Use when configuring routes, route modules, loaders, actions, forms, fetchers, navigation, pending UI, SSR/SPA/pre-rendering, middleware, URL params/search params, or React Router upgrades.
+description: Build applications with React Router in Framework, Data, Declarative, and unstable RSC modes. Use when configuring routes, route modules, loaders, actions, forms, fetchers, navigation, pending UI, SSR/SPA/pre-rendering, middleware, URL params/search params, or React Router upgrades. Also use for nested route layout composition with Outlet, parent-child route structure, sidebar navigation, and deciding when to use Outlet vs useLocation.
 license: MIT
 ---
 
@@ -103,12 +103,13 @@ node_modules/react-router/docs/how-to/react-server-components.md
 
 Load the relevant reference after identifying the mode:
 
-| Reference                        | Use When                                      |
-| -------------------------------- | --------------------------------------------- |
-| `references/framework-mode.md`   | Framework Mode or RSC Framework base behavior |
-| `references/data-mode.md`        | Data Mode or RSC Data base behavior           |
-| `references/declarative-mode.md` | Declarative Mode                              |
-| `references/rsc.md`              | Any unstable RSC app                          |
+| Reference                                   | Use When                                                      |
+| ------------------------------------------- | ------------------------------------------------------------- |
+| `references/framework-mode.md`              | Framework Mode or RSC Framework base behavior                 |
+| `references/data-mode.md`                   | Data Mode or RSC Data base behavior                           |
+| `references/declarative-mode.md`            | Declarative Mode                                              |
+| `references/rsc.md`                         | Any unstable RSC app                                          |
+| `references/outlet-layout-patterns.md`      | Nested routes with shared layouts, Outlet composition, sidebar|
 
 ## Mode Migration Doc Index
 
