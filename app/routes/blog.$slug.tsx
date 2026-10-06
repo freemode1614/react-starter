@@ -23,35 +23,29 @@ export default function BlogPost() {
 
   if (!content) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">
-            Post not found
-          </h1>
-          <Link to="/blog" className="text-blue-600 hover:underline">
-            ← Back to Blog
-          </Link>
-        </div>
+      <div className="text-center py-16">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Post not found</h1>
+        <Link to="/blog" className="text-blue-600 hover:underline">
+          ← Back to Blog
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      <article className="container mx-auto px-4 py-12 max-w-3xl">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          {slug?.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-8">
-          {content}
-        </p>
-        <Link
-          to="/blog"
-          className="text-gray-500 hover:text-gray-700 dark:text-gray-400"
-        >
-          ← Back to Blog
-        </Link>
-      </article>
-    </div>
+    <article>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        {slug?.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+      </h1>
+      <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-8">
+        {content}
+      </p>
+      <Link
+        to="/blog"
+        className="text-gray-500 hover:text-gray-700 dark:text-gray-400"
+      >
+        ← Back to Blog
+      </Link>
+    </article>
   );
 }

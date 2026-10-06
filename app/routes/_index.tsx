@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { Page } from "../components/page";
 import { Welcome } from "../welcome/welcome";
 import type { Route } from "./+types/_index";
 
@@ -7,141 +8,112 @@ export function meta(_: Route.MetaArgs) {
     { title: "React Router v8 + fs-routes SPA" },
     {
       name: "description",
-      content: "Testing React Router v8 with fs-routes in SPA mode",
+      content:
+        "A production-ready SPA starter built on React Router v8 + fs-routes",
     },
   ];
 }
 
-const testRoutes = [
-  // Basic routes
-  { path: "/", label: "Home (index)", group: "Basic" },
-  { path: "/about", label: "About", group: "Basic" },
-  // Dynamic routes
-  { path: "/users/alice", label: "User Profile ($param)", group: "Dynamic" },
-  { path: "/blog", label: "Blog (index)", group: "Dynamic" },
+const capabilities = [
   {
-    path: "/blog/getting-started",
-    label: "Blog Post ($slug)",
-    group: "Dynamic",
-  },
-  // Nested layout routes
-  {
-    path: "/dashboard",
-    label: "Dashboard (layout + children)",
-    group: "Nested",
+    title: "Routing",
+    body: "File-based (fs-routes) with nested layouts, index routes, dynamic & optional params, and a 404 catch-all. Conventions on the /docs page.",
   },
   {
-    path: "/dashboard/settings",
-    label: "Dashboard / Settings",
-    group: "Nested",
+    title: "Error handling",
+    body: "Root ErrorBoundary in app/root.tsx — /boom is a route that always throws so you can see it catch the error.",
   },
   {
-    path: "/settings/profile",
-    label: "Settings / Profile (layout)",
-    group: "Nested",
+    title: "API client",
+    body: "Typed client generated from a hosted OpenAPI spec by @moccona/apicodegen’s Vite plugin — pnpm api:gen.",
   },
   {
-    path: "/settings/preferences",
-    label: "Settings / Preferences",
-    group: "Nested",
-  },
-  // Pathless layout
-  {
-    path: "/admin",
-    label: "Admin (pathless layout)",
-    group: "Pathless",
-  },
-  // Optional routes
-  {
-    path: "/products",
-    label: "Products (with optional $category)",
-    group: "Optional",
+    title: "Shared components",
+    body: "Page, Card, Button, Input, Badge, Spinner in app/components/, used across every page.",
   },
   {
-    path: "/products/electronics",
-    label: "Products / electronics (optional param)",
-    group: "Optional",
+    title: "Theming",
+    body: "Tailwind v4, self-hosted Inter font, class-based dark mode with a persisted toggle (top-right).",
   },
   {
-    path: "/optional-demo",
-    label: "Optional Route Demo ((name).tsx)",
-    group: "Optional",
-  },
-  // Other
-  { path: "/docs", label: "Documentation", group: "Other" },
-  // Splat & escaped
-  { path: "/files", label: "Files (splat/catch-all $.tsx)", group: "Splat" },
-  {
-    path: "/files/src/components/app.tsx",
-    label: "Files / src/components/app.tsx (deep splat)",
-    group: "Splat",
+    title: "Environment config",
+    body: "APP_-prefixed variables exposed to the client via import.meta.env — see .env.example.",
   },
   {
-    path: "/api-v2",
-    label: "API v2 (escaped [name].tsx)",
-    group: "Escaped",
+    title: "Testing",
+    body: "Vitest + React Testing Library with jsdom — pnpm test.",
   },
-  // Combined
   {
-    path: "/special",
-    label: "Special (optional+escape ([name]).tsx)",
-    group: "Combined",
+    title: "Deployment",
+    body: "Docker + nginx, GitHub Actions CI, and SPA static-hosting notes in the README.",
   },
 ];
 
+const pages = [
+  { path: "/about", label: "About" },
+  { path: "/dashboard", label: "Dashboard (nested layout)" },
+  {
+    path: "/dashboard/settings",
+    label: "Dashboard / Settings (form + localStorage)",
+  },
+  { path: "/blog", label: "Blog (list + $slug detail)" },
+  { path: "/products", label: "Products (optional $category)" },
+  { path: "/api-demo", label: "API Demo (OpenAPI codegen → live data)" },
+  { path: "/boom", label: "Error Boundary demo (always throws)" },
+  { path: "/this-page-does-not-exist", label: "404 (catch-all $.tsx)" },
+  { path: "/docs", label: "Route conventions & starter guide" },
+];
+
 export default function Home() {
-  const groups = Object.entries(
-    testRoutes.reduce<Record<string, typeof testRoutes>>((acc, route) => {
-      const group = route.group || "Other";
-      acc[group] ??= [];
-      acc[group].push(route);
-      return acc;
-    }, {}),
-  );
-
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-12 max-w-3xl">
-        <header className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            React Router v8 + fs-routes SPA
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            File-based routing in SPA mode — click any route below to navigate.
-          </p>
-        </header>
-
-        {groups.map(([groupName, routes]) => (
-          <section key={groupName} className="mb-8">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-3">
-              {groupName}
-            </h2>
-            <nav className="space-y-2">
-              {routes.map(({ path, label }) => (
-                <Link
-                  key={path}
-                  to={path}
-                  className="block p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                >
-                  <span className="font-mono text-sm text-blue-600 dark:text-blue-400">
-                    {path}
-                  </span>
-                  <span className="block text-gray-700 dark:text-gray-300 mt-1">
-                    {label}
-                  </span>
-                </Link>
-              ))}
-            </nav>
-          </section>
-        ))}
-
-        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-            Original Welcome Page
-          </h2>
-          <Welcome />
+    <Page
+      title="React Router v8 + fs-routes SPA"
+      description="A production-ready SPA starter — file-based routing, error handling, a codegen’d API client, dark mode, and testing. Explore the pages below, or start from what’s included."
+    >
+      <section className="mb-10">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-3">
+          What’s in this starter
+        </h2>
+        <div className="grid sm:grid-cols-2 gap-3">
+          {capabilities.map(({ title, body }) => (
+            <div
+              key={title}
+              className="rounded-lg border border-gray-200 dark:border-gray-700 p-4"
+            >
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                {title}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{body}</p>
+            </div>
+          ))}
         </div>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-3">
+          Pages
+        </h2>
+        <nav className="grid sm:grid-cols-2 gap-2">
+          {pages.map(({ path, label }) => (
+            <Link
+              key={path}
+              to={path}
+              className="block p-3 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+            >
+              <span className="font-mono text-sm text-blue-600 dark:text-blue-400">
+                {path}
+              </span>
+              <span className="block text-sm text-gray-700 dark:text-gray-300 mt-0.5">
+                {label}
+              </span>
+            </Link>
+          ))}
+        </nav>
+      </section>
+
+      <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <Welcome />
       </div>
-    </main>
+    </Page>
   );
 }

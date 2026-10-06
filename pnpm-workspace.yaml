@@ -1,0 +1,7 @@
+# pnpm settings (pnpm >= 11 reads config from this file, not from
+# package.json#pnpm).
+# @moccona/apicodegen declares `vite: ^7` as a peer dependency, but only
+# uses Vite's types — it works fine with Vite 8.
+peerDependencyRules:
+  allowedVersions:
+    vite: "8"

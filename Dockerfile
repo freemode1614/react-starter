@@ -1,17 +1,23 @@
-FROM node:24-alpine AS dependencies-env
-RUN corepack enable && corepack prepare pnpm@11 --activate
-COPY . /app
+# Syntax: docker/dockerfile:1
+
+# Build the client bundle. pnpm version is pinned via the `packageManager`
+# field in package.json (corepack reads it automatically).
+FROM node:24-alpine AS build
+RUN corepack enable
 WORKDIR /app
+
+# Install dependencies first so this layer is cached unless the
+# manifests change.
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
-FROM node:24-alpine AS build-env
-RUN corepack enable && corepack prepare pnpm@11 --activate
-COPY --from=dependencies-env /app /app
-WORKDIR /app
+# Copy the source and build (SPA mode outputs build/client only).
+COPY . .
 RUN pnpm build
 
+# Serve the static client build with nginx (SPA fallback in nginx.conf).
 FROM nginx:alpine
-COPY --from=build-env /app/build/client /usr/share/nginx/html
+COPY --from=build /app/build/client /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

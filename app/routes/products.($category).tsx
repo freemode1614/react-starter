@@ -1,4 +1,11 @@
 import { Link, useParams } from "react-router";
+import type { Route } from "./+types/products.($category)";
+
+export function meta({ params }: Route.MetaArgs) {
+  return [
+    { title: params.category ? `Products: ${params.category}` : "Products" },
+  ];
+}
 
 export default function ProductsCategory() {
   const { category } = useParams();

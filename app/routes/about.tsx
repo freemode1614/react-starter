@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Page } from "../components/page";
 import type { Route } from "./+types/about";
 
 export function meta(_: Route.MetaArgs) {
@@ -10,16 +10,18 @@ export function meta(_: Route.MetaArgs) {
 
 export default function About() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="max-w-2xl mx-auto px-4 py-16">
-        <h1 className="text-4xl font-bold mb-4">About</h1>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">
-          This is a test route for React Router v8 + fs-routes SPA mode.
-        </p>
-        <Link to="/" className="text-blue-600 hover:underline">
-          ← Back to Home
-        </Link>
-      </div>
-    </div>
+    <Page
+      title="About"
+      description="A production-ready React SPA starter."
+      backTo={{ to: "/", label: "Back to Home" }}
+    >
+      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+        This starter ships the pieces a real project needs: file-based routing
+        (React Router v8 + fs-routes), error handling, a typed API client
+        generated from a hosted OpenAPI spec, dark mode, a shared component
+        layer, environment configuration, testing, and deployment config (Docker
+        + nginx + CI).
+      </p>
+    </Page>
   );
 }

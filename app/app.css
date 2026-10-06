@@ -1,15 +1,24 @@
+@import "@fontsource-variable/inter";
 @import "tailwindcss";
 
+/*
+ * Class-based dark mode: `dark:` utilities apply when <html> has the `dark`
+ * class. The class is set before paint by the inline script in app/root.tsx
+ * (system preference by default, localStorage override) and toggled by
+ * <ThemeToggle /> (app/components/theme-toggle.tsx).
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 html,
 body {
   @apply bg-white dark:bg-gray-950;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+.dark {
+  color-scheme: dark;
 }

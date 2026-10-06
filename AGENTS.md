@@ -3,21 +3,39 @@
 ## Project Structure
 
 ```
-app/
-├── root.tsx              # Root layout (wraps all routes)
-├── app.css               # Global styles (Tailwind)
-├── routes.ts             # Route config (flatRoutes)
-├── routes/               # All route files
-│   ├── _index.tsx
-│   ├── about.tsx
-│   ├── dashboard.tsx          # Layout for /dashboard/*
-│   ├── dashboard._index.tsx   # Index of /dashboard
-│   ├── dashboard.settings.tsx # /dashboard/settings
-│   ├── blog.tsx               # Layout for /blog/*
-│   ├── blog.$slug.tsx         # /blog/:slug
-│   └── ...
-└── welcome/              # Shared component (not routes)
+.
+├── .env.example          # APP_-prefixed env vars (copy to .env)
+├── vitest.config.ts      # Standalone test config (does NOT load vite.config.ts)
+└── app/
+    ├── root.tsx              # Root layout + root ErrorBoundary + pre-paint theme script
+    ├── entry.client.tsx      # Client bootstrap (hydration, global error hooks)
+    ├── env.d.ts              # ImportMetaEnv typing for APP_* variables
+    ├── app.css               # Global styles (Tailwind, class-based dark mode)
+    ├── routes.ts             # Route config (flatRoutes)
+    ├── routes/               # All route files
+    │   ├── _index.tsx
+    │   ├── about.tsx
+    │   ├── $.tsx               # Catch-all / 404 (maps to `*`)
+    │   ├── boom.tsx            # Always throws — demos the root ErrorBoundary
+    │   ├── dashboard.tsx          # Layout for /dashboard/*
+    │   ├── dashboard._index.tsx   # Index of /dashboard
+    │   ├── dashboard.settings.tsx # /dashboard/settings
+    │   ├── blog.tsx               # Layout for /blog/*
+    │   ├── blog.$slug.tsx         # /blog/:slug
+    │   ├── api-demo.tsx           # /api-demo — consumes the generated API client
+    │   ├── docs.tsx               # /docs — starter guide
+    │   └── ...
+    ├── components/          # Shared UI: Page, Button, Card, Badge, Input, Spinner, ThemeToggle
+    ├── api/
+    │   └── petstore.ts        # GENERATED from an OpenAPI spec — do not hand-edit
+    ├── tests/               # Vitest + RTL tests
+    └── welcome/              # Welcome screen (not routes)
 ```
+
+> **Generated file:** `app/api/petstore.ts` is written by the
+> `apiCodeGenPlugin` (see `vite.config.ts`) on every dev/build start. Never edit
+> it by hand — change the spec/config and regenerate (`pnpm api:gen` or just
+> restart `pnpm dev`).
 
 ## Route File Naming Conventions
 
@@ -76,11 +94,16 @@ Starts with `_` but is NOT `_index`. Creates a layout wrapper without adding a U
 ### 7. Optional Segment (`()`)
 
 ```
-File: products.(category).tsx   →  /products OR /products/:category
+File: products.($category).tsx  →  /products OR /products/:category
 File: (optional-demo).tsx       →  /optional-demo
 ```
 
 Parentheses make the segment optional. When omitted, the route still matches the parent path.
+
+**Important:** the name inside the parens is the *literal* segment unless it starts
+with `$`. `products.(category).tsx` matches only `/products` or `/products/category`
+(the literal word "category") — it does **not** capture a param. To get an optional
+dynamic param, use `($param)`: `products.($category).tsx` → `/products/:category?`.
 
 ### 8. Escaped Segment (`[]`)
 
@@ -108,6 +131,21 @@ app/routes/
 
 **Never mix** a flat file with a folder of the same name — it causes a route ID collision.
 
+### 10. Catch-all / 404 (root-level `$`)
+
+```
+File: $.tsx                   →  * (any URL that matches no other route)
+```
+
+A lone `$.tsx` at the **root** of `app/routes/` is the catch-all route — it renders
+for any URL that no other route matches (your 404 page). Unlike a nested splat
+(`files.$.tsx` → `/files/*`), the root splat sits at the lowest route rank, so every
+specific route wins first.
+
+Note: `404.tsx` is **not** special in React Router v8 — it is just a literal `/404`
+route. The catch-all convention is `$.tsx`. (In SSR/prerender mode, add a loader
+returning `data({}, 404)` so crawlers get a real 404 status.)
+
 ## Rules
 
 1. **Every route must export a default component.** No exceptions.
@@ -117,6 +155,11 @@ app/routes/
 5. **No `<a>` tags with `href` starting with `/`.** Use `<Link to="/...">` instead.
 6. **Type imports use `./+types/<filename>`.** Example: `import type { Route } from "./+types/about"`.
 7. **Folder and flat file cannot coexist for the same name.** Either use `folder/route.tsx` OR `folder.tsx`, not both.
+8. **`app/api/petstore.ts` is generated code.** It is rewritten by the `apiCodeGenPlugin` on every dev/build start (and by `pnpm api:gen`). Never hand-edit it — change the spec/config and regenerate.
+9. **Tests live in `app/tests/` only.** Never put `*.test.tsx`/`*.test.ts` in `app/routes/` — fs-routes would register them as routes. `vitest.config.ts` is standalone; it must not load `vite.config.ts` plugins.
+10. **Environment variables use the `APP_` prefix** (not `VITE_`). Exposed via `envOptions.envPrefix` in `vite.config.ts`, typed in `app/env.d.ts`, documented in `.env.example`.
+11. **Dark mode is class-based** (`.dark` on `<html>`). Toggle logic lives in `app/components/theme-toggle.tsx`; the pre-paint inline script in `root.tsx` must stay in sync with its `localStorage` key (`"theme"`). New styles need `dark:` variants.
+12. **Reuse `app/components/`** (Page, Button, Card, Badge, Input, Spinner, ThemeToggle) instead of duplicating markup in routes. `buttonClasses(variant)` is exported for styling `<Link>`s.
 
 ## Creating a New Route
 
@@ -143,6 +186,10 @@ app/routes/
 | `pnpm build` | Production build → `build/client/` |
 | `pnpm start` | Preview production build (http://localhost:3000) |
 | `pnpm check` | Biome lint + format (auto-fix) |
+| `pnpm check:ci` | Biome CI mode (fails on issues, no auto-fix) |
 | `pnpm lint` | Biome lint only |
 | `pnpm format` | Biome format only |
 | `pnpm typecheck` | TypeScript type checking |
+| `pnpm test` | Run tests once (Vitest + RTL) |
+| `pnpm test:watch` | Run tests in watch mode |
+| `pnpm api:gen` | Regenerate `app/api/petstore.ts` from the OpenAPI spec (CLI) |

@@ -1,14 +1,12 @@
 import { Outlet } from "react-router";
+import { Page } from "../components/page";
 
+// Layout for /products/* — note the parent renders its own <h1>; children
+// (products._index.tsx, products.($category).tsx) render inside <Outlet />.
 export default function ProductsLayout() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-12 max-w-3xl">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-          Products
-        </h1>
-        <Outlet />
-      </div>
-    </div>
+    <Page title="Products" backTo={{ to: "/", label: "Back to Home" }}>
+      <Outlet />
+    </Page>
   );
 }
